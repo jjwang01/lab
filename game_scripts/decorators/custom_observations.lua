@@ -62,6 +62,24 @@ local function teamScore()
   return tensor.DoubleTensor{info.teamScore, info.otherTeamScore}
 end
 
+--[[
+local function lidar()
+  local info = game:playerInfo()
+  local pos = info.pos -- gets 3D position
+  local angles = info.angles -- for orientation (pitch, yaw, roll)
+
+  -- need 2D position only
+  local xpos = pos[1]
+  local ypos = pos[2]
+
+  -- we are only concerned with yaw (rotation around the z axis) in 2D
+  local angle = angles[2] 
+
+
+
+  return tensor.DoubleTensor{}  
+end]]
+
 local framesRemainingTensor = tensor.DoubleTensor(1)
 local function framesRemainingAt60()
   framesRemainingTensor:val(timeout.timeRemainingSeconds() * 60)
@@ -84,6 +102,7 @@ function custom_observations.decorate(api)
     custom_observations.addSpec('TEAM.SCORE', 'Doubles', {2}, teamScore)
     custom_observations.addSpec('FRAMES_REMAINING_AT_60', 'Doubles', {1},
                                 framesRemainingAt60)
+    custom_observations.addSpec('LIDAR', 'Doubles', {3}, lidar)
     api.setInstruction('')
     debug_observations.extend(custom_observations)
     if params.enableCameraMovement == 'true' then
